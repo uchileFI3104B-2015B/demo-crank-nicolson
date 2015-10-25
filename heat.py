@@ -37,6 +37,13 @@ def calcula_alpha_y_beta(alhpa, beta, b, r, N_Steps):
         alpha[i] = -Aplus / (Acero + Aminus*alpha[i-1])
         beta[i] = (b[i] - Aminus*beta[i-1]) / (Aminus*alpha[i-1] + Acero)
 
+def avanza_paso_temporal(T, T_next, alpha, beta, N_steps):
+    T_next[0] = 0
+    T_next[-1] = 0
+    for i in range(N_steps - 2, 0, -1):
+        T_next[i] = alpha[i] * T[i+1] + beta[i]
+    # T = T_next.copy() # Esto no funciona, hacerlo fuera de la funcion
+
 # Main
 
 # setup
@@ -57,7 +64,10 @@ calcula_b(b, N_steps, r)
 calcula_alpha_y_beta(alpha, beta, b, r, N_steps)
 
 # Avanza T en el tiempo
-T_next[0] = 0
-T_next[-1] = 0
-for i in range(N_steps - 2, 0, -1):
-    T_next[i] = alpha[i] * T[i+1] + beta[i]
+# T_next[0] = 0
+# T_next[-1] = 0
+# for i in range(N_steps - 2, 0, -1):
+#     T_next[i] = alpha[i] * T[i+1] + beta[i]
+avanza_paso_temporal(T, T_next, alpha, beta, N_steps)
+T = T_next.copy()
+print T
