@@ -30,8 +30,27 @@ def inicializa_T(T, N_steps, h):
 # setup
 N_steps = 5
 h = 1 / (N_steps - 1)
+dt = h**2 / 2 # Este es el máximo teórico para el metodo explicito
+r = dt / 2 / h**2
 
 T = np.zeros(N_steps)
+b = np.zeros(N_steps)
+alpha = np.zeros(N_steps)
+beta = np.zeros(N_steps)
 
 inicializa_T(T, N_steps, h)
-print T
+# print T
+
+# Calcula b_j
+for j in range(1, N_steps - 1):
+    b[j] = r * T[j+1] + (1-2*r) * T[j] + r * T[j-1]
+
+# Calcula alpha y beta:
+alpha[0] = 0
+beta[0] = 0
+for i in range(1, N_steps):
+    alpha[i] = r / (-1 * r * alpha[i-1] + (1+2*r))
+    beta[i] = (b[i] + r * beta[i-1]) / (-1 * r * alpha[i-1] + 1 + 2 * r)
+
+print alpha
+print beta
