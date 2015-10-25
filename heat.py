@@ -12,6 +12,19 @@ from __future__ import division
 import numpy as np
 
 
+def inicializa_T(T, N_steps, h):
+    '''
+    Rellena T con las condiciones iniciales del problema.
+    Se asegura que las condiciones en los bordes sean cero.
+    '''
+    for i in range(N_steps):
+        x = i * h
+        T[i] = np.sin(np.pi * x)
+    T[0] = 0
+    T[-1] = 0
+
+
+
 # Main
 
 # setup
@@ -20,9 +33,5 @@ h = 1 / (N_steps - 1)
 
 T = np.zeros(N_steps)
 
-# inicializacion de T:
-for i in range(N_steps):
-    x = i * h
-    T[i] = np.sin(np.pi * x)
-
+inicializa_T(T, N_steps, h)
 print T
