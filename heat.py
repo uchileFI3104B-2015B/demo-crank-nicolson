@@ -46,10 +46,18 @@ dt = h**2 / 2 # Este es el máximo teórico para el metodo explicito
 r = dt / 2 / h**2
 
 T = np.zeros(N_steps)
+T_next = np.zeros(N_steps)
 b = np.zeros(N_steps)
 alpha = np.zeros(N_steps)
 beta = np.zeros(N_steps)
 
 inicializa_T(T, N_steps, h)
+
 calcula_b(b, N_steps, r)
 calcula_alpha_y_beta(alpha, beta, b, r, N_steps)
+
+# Avanza T en el tiempo
+T_next[0] = 0
+T_next[-1] = 0
+for i in range(N_steps - 2, 0, -1):
+    T_next[i] = alpha[i] * T[i+1] + beta[i]
