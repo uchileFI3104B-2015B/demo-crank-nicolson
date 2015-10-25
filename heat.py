@@ -27,6 +27,16 @@ def calcula_b(b, N_steps, r):
     for j in range(1, N_steps - 1):
         b[j] = r * T[j+1] + (1-2*r) * T[j] + r * T[j-1]
 
+def calcula_alpha_y_beta(alhpa, beta, b, r, N_Steps):
+    Aplus = -1  * r
+    Acero = (1+2 * r)
+    Aminus = -1 * r
+    alpha[0] = 0
+    beta[0] = 0 # viene de la condicion de borde T(t, 0) = 0
+    for i in range(1, N_steps):
+        alpha[i] = -Aplus / (Acero + Aminus*alpha[i-1])
+        beta[i] = (b[i] - Aminus*beta[i-1]) / (Aminus*alpha[i-1] + Acero)
+
 # Main
 
 # setup
@@ -42,13 +52,4 @@ beta = np.zeros(N_steps)
 
 inicializa_T(T, N_steps, h)
 calcula_b(b, N_steps, r)
-
-# Calcula alpha y beta:
-alpha[0] = 0
-beta[0] = 0
-for i in range(1, N_steps):
-    alpha[i] = r / (-1 * r * alpha[i-1] + (1+2*r))
-    beta[i] = (b[i] + r * beta[i-1]) / (-1 * r * alpha[i-1] + 1 + 2 * r)
-
-print alpha
-print beta
+calcula_alpha_y_beta(alpha, beta, b, r, N_steps)
