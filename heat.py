@@ -23,7 +23,9 @@ def inicializa_T(T, N_steps, h):
     T[0] = 0
     T[-1] = 0
 
-
+def calcula_b(b, N_steps, r):
+    for j in range(1, N_steps - 1):
+        b[j] = r * T[j+1] + (1-2*r) * T[j] + r * T[j-1]
 
 # Main
 
@@ -39,11 +41,7 @@ alpha = np.zeros(N_steps)
 beta = np.zeros(N_steps)
 
 inicializa_T(T, N_steps, h)
-# print T
-
-# Calcula b_j
-for j in range(1, N_steps - 1):
-    b[j] = r * T[j+1] + (1-2*r) * T[j] + r * T[j-1]
+calcula_b(b, N_steps, r)
 
 # Calcula alpha y beta:
 alpha[0] = 0
