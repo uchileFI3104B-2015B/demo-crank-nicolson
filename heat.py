@@ -10,6 +10,7 @@ La ecuación a resover es:
 
 from __future__ import division
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def inicializa_T(T, N_steps, h):
@@ -41,15 +42,18 @@ def avanza_paso_temporal(T, T_next, alpha, beta, N_steps):
     T_next[0] = 0
     T_next[-1] = 0
     for i in range(N_steps - 2, 0, -1):
-        T_next[i] = alpha[i] * T[i+1] + beta[i]
+        T_next[i] = alpha[i] * T_next[i+1] + beta[i]
     # T = T_next.copy() # Esto no funciona, hacerlo fuera de la funcion
 
 # Main
 
 # setup
-N_steps = 5
+N_steps =  41
+N_pasos_temporales = 200
+
 h = 1 / (N_steps - 1)
-dt = h**2 / 2 # Este es el máximo teórico para el metodo explicito
+# dt = h**2 / 2 # Este es el máximo teórico para el metodo explicito
+dt = 0.01
 r = dt / 2 / h**2
 
 T = np.zeros(N_steps)
@@ -60,14 +64,38 @@ beta = np.zeros(N_steps)
 
 inicializa_T(T, N_steps, h)
 
-calcula_b(b, N_steps, r)
-calcula_alpha_y_beta(alpha, beta, b, r, N_steps)
+# Queremos guardar las soluciones en cada paso
+T_solucion = np.zeros((N_pasos_temporales, N_steps))
+T_solucion[0,:] = T.copy()
 
-# Avanza T en el tiempo
-# T_next[0] = 0
-# T_next[-1] = 0
-# for i in range(N_steps - 2, 0, -1):
-#     T_next[i] = alpha[i] * T[i+1] + beta[i]
-avanza_paso_temporal(T, T_next, alpha, beta, N_steps)
-T = T_next.copy()
-print T
+for i in range(1, N_pasos_temporales):
+    calcula_b(b, N_steps, r)
+    calcula_alpha_y_beta(alpha, beta, b, r, N_steps)
+    avanza_paso_temporal(T, T_next, alpha, beta, N_steps)
+    T = T_next.copy()
+    T_solucion[i,:] = T.copy()
+
+
+# Plots
+
+# ejemplo 1
+x = np.linspace(0, 1, N_steps)
+fig = plt.figure(1)
+fig.clf()
+ax = fig.add_subplot(111)
+for i in range(0, N_pasos_temporales,20):
+    ax.plot(x, T_solucion[i,:])
+ax.set_ylim(0, 1)
+
+# ejemplo 2
+# usar el plano x, t y plotear T en la 3a dimension
+fig2 = plt.figure(2)
+fig2.clf()
+ax2 = fig2.add_subplot(111)
+y = np.arange(0, N_pasos_temporales) * dt
+X, Y = np.meshgrid(x, y)
+ax2.pcolormesh(X, Y, T_solucion)
+
+plt.show()
+plt.draw()
+
